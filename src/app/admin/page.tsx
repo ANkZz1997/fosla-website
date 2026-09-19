@@ -67,7 +67,18 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
   }
 
   const store = getStore();
-  const [all, lastRun] = await Promise.all([store.listJobs(150), store.getMeta<RunSummary>("lastRun")]);
+  // Really talk to the database, so "Saved" means it works and a wrong credential shows up here instead of silently losing jobs.
+  let storage: { ok: boolean; text: string; detail?: string };
+  try {
+    await store.ping();
+    storage = { ok: true, text: "Saved ✓", detail: store.describe() };
+  } catch (err) {
+    storage = { ok: false, text: store.persistent ? "Cannot reach Redis" : "NOT saved (Redis not found)", detail: err instanceof Error ? err.message : String(err) };
+  }
+  // If the database is unreachable, show the explanation instead of crashing the page.
+  const [all, lastRun]: [Awaited<ReturnType<typeof store.listJobs>>, RunSummary | null] = storage.ok
+    ? await Promise.all([store.listJobs(150), store.getMeta<RunSummary>("lastRun")]).catch(() => [[], null] as [never[], null])
+    : [[], null];
   const tab = ((TABS as readonly string[]).includes(sp.status ?? "") ? sp.status! : "new") as (typeof TABS)[number];
   // "Last 24 hours" = everything the nightly (or manual) check found since yesterday, minus what you skipped.
   const isNew = (j: (typeof all)[number]) => Date.now() - Date.parse(j.createdAt) < DAY && j.status !== "skipped";
@@ -87,7 +98,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
     <Shell loggedIn>
       <main className="wrap">
         <div className="status">
-          <div className={`stat ${store.persistent ? "good" : "bad"}`}><b>Memory of posted jobs</b><span>{store.persistent ? "Saved ✓" : "NOT saved (connect Upstash Redis)"}</span></div>
+          <div className={`stat ${storage.ok ? "good" : "bad"}`}><b>Memory of posted jobs</b><span>{storage.text}</span>{storage.detail ? <small style={{ display: "block", marginTop: 4, color: "#777", fontSize: 11, wordBreak: "break-word" }}>{storage.detail}</small> : null}</div>
           <div className="stat"><b>Posting mode</b><span>{canPost ? (env.autoPost ? "Bridge · automatic" : "Bridge · one click") : "Manual (copy & paste)"}</span></div>
           <div className={`stat ${aiEnabled() ? "good" : ""}`}><b>AI cleanup of messy pages</b><span>{aiEnabled() ? `On (${env.aiModel})` : "Off"}</span></div>
           <div className="stat"><b>Public job board</b><span>{env.landingJobs === "posted" ? "Posted jobs only" : "All open jobs (Skip hides one)"}</span></div>
@@ -95,8 +106,12 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
           <div className="stat"><b>Last check</b><span>{lastRun ? new Date(lastRun.finishedAt).toLocaleString("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short" }) : "Never"}{lastRun ? ` · ${lastRun.created} new` : ""}</span></div>
         </div>
 
-        {!store.persistent ? (
-          <div className="notice">Without Upstash Redis the app forgets what it already prepared, so the same jobs can appear again on every run. Add the free <b>Upstash Redis</b> integration in your Vercel project (Storage tab) and redeploy.</div>
+        {!storage.ok ? (
+          <div className="notice">
+            Jobs are <b>not being saved</b>, so they will not show on the website. {store.persistent
+              ? <>The database refused or did not answer ({storage.detail}). In Vercel open <b>Storage</b>, check the database is connected to this project for <b>Production</b>, then <b>Redeploy</b>. If the password was changed, reconnect the database so Vercel refreshes it.</>
+              : <>No Redis connection was found. In your Vercel project open <b>Storage</b>, connect a Redis database to this project (Production), then <b>Redeploy</b>. Any Redis works (Upstash or Redis Cloud).</>}
+          </div>
         ) : null}
         {lastRun?.sources.some((s) => !s.ok) ? (
           <div className="notice">

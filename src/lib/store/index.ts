@@ -1,10 +1,21 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import type { JobRecord } from "../types";
+import { resolveRedis } from "./redis-config";
+import { TcpTransport } from "./tcp";
+
+/** Sends one Redis command and returns its reply. */
+export interface Transport {
+  send(args: (string | number)[]): Promise<unknown>;
+}
 
 export interface Store {
   /** False means state is lost between serverless invocations, so dedupe cannot be trusted. */
   persistent: boolean;
+  /** Human-readable description for the dashboard, never containing secrets. */
+  describe(): string;
+  /** Throws if the database cannot be reached with the configured credentials. */
+  ping(): Promise<void>;
   getJob(id: string): Promise<JobRecord | null>;
   saveJob(job: JobRecord): Promise<void>;
   /** Newest first. */
@@ -23,24 +34,54 @@ export interface Store {
 const TTL_SECONDS = 60 * 60 * 24 * 90;
 const MAX_INDEX = 500;
 
-/** Upstash Redis over its REST API (what the Vercel Marketplace integration provisions). No SDK needed. */
-class RedisStore implements Store {
-  persistent = true;
+/** Upstash's HTTPS API: POST a JSON command array, get {"result": ...} back. */
+export class RestTransport implements Transport {
   constructor(
     private url: string,
     private token: string,
   ) {}
 
-  private async cmd<T = unknown>(...args: (string | number)[]): Promise<T> {
+  async send(args: (string | number)[]): Promise<unknown> {
     const res = await fetch(this.url, {
       method: "POST",
       headers: { authorization: `Bearer ${this.token}`, "content-type": "application/json" },
       body: JSON.stringify(args),
       cache: "no-store",
     });
-    const body = (await res.json()) as { result?: T; error?: string };
+    const body = (await res.json().catch(() => ({}))) as { result?: unknown; error?: string };
     if (!res.ok || body.error) throw new Error(`Redis ${args[0]} failed: ${body.error ?? res.status}`);
-    return body.result as T;
+    return body.result;
+  }
+}
+
+/** The job storage logic, independent of how the database is reached (Upstash HTTPS or a normal Redis connection). */
+export class RedisStore implements Store {
+  persistent = true;
+  constructor(
+    private transport: Transport,
+    private source = "UPSTASH_REDIS_REST_URL",
+  ) {}
+
+  static rest(url: string, token: string, source?: string) {
+    return new RedisStore(new RestTransport(url, token), source);
+  }
+
+  describe() {
+    return `Redis via ${this.source}`;
+  }
+
+  private async cmd<T = unknown>(...args: (string | number)[]): Promise<T> {
+    try {
+      return (await this.transport.send(args)) as T;
+    } catch (err) {
+      // Keep the failing command's name, so the dashboard can say what went wrong.
+      throw err instanceof Error && /^Redis \w+ failed/.test(err.message) ? err : new Error(`Redis ${args[0]} failed: ${err instanceof Error ? err.message : String(err)}`);
+    }
+  }
+
+  async ping() {
+    const r = await this.cmd<string>("PING");
+    if (String(r).toUpperCase() !== "PONG") throw new Error(`Unexpected reply to PING: ${String(r)}`);
   }
 
   async getJob(id: string) {
@@ -97,6 +138,14 @@ class MemoryStore implements Store {
   constructor() {
     // On Vercel the memory is per-instance and short-lived, so it is not a real store.
     this.persistent = this.useFile;
+  }
+
+  describe() {
+    return this.useFile ? "local file (.data/store.json)" : "temporary memory (no Redis found)";
+  }
+
+  async ping() {
+    if (!this.persistent) throw new Error("No Redis credentials found in the environment variables");
   }
 
   private async load() {
@@ -157,8 +206,11 @@ const g = globalThis as unknown as { __foslaStore?: Store };
 
 export function getStore(): Store {
   if (g.__foslaStore) return g.__foslaStore;
-  const url = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
-  g.__foslaStore = url && token ? new RedisStore(url, token) : new MemoryStore();
+  const redis = resolveRedis();
+  g.__foslaStore = !redis
+    ? new MemoryStore()
+    : redis.kind === "rest"
+      ? RedisStore.rest(redis.url, redis.token, redis.source)
+      : new RedisStore(new TcpTransport(redis.url), redis.source);
   return g.__foslaStore;
 }

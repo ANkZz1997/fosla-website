@@ -57,9 +57,9 @@ Start with Review mode. Switch to Bridge once you trust the output.
 > Step-by-step with checks: see **[GO_LIVE.md](GO_LIVE.md)**. To prepare your `.env`, run `npm run setup:env`.
 
 1. Push this folder to GitHub and import it in Vercel.
-2. **Storage → add "Upstash Redis"** (free). This is how the app remembers what it already prepared. It sets
-   `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` for you. **Do not skip this**: without it the same jobs
-   would come back on every run, and automatic posting refuses to run.
+2. **Storage → connect a Redis database** (Upstash or Redis Cloud, free plan). Vercel adds the connection variable
+   (e.g. `KV_REDIS_URL`) and the app finds it by itself. **Do not skip this**: without it jobs are not saved, so the
+   website shows nothing, and automatic posting refuses to run.
 3. Add environment variables (see [.env.example](.env.example)):
    - `ADMIN_PASSWORD`, `SESSION_SECRET` (long random string), `CRON_SECRET` (long random string)
    - `WHATSAPP_CHANNEL_URL` (your channel link: the landing page's Join button and the dashboard's "Open channel" button)

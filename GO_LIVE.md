@@ -52,12 +52,13 @@ Create a **private** repository on github.com, then run the two commands it show
 
 ## 4. Add storage (required)
 
-Project > **Storage** > **Create / Connect Database** > **Upstash** > **Redis** > free plan > connect it to this project.
-Vercel adds the connection variables itself (named `KV_REST_API_URL` / `KV_REST_API_TOKEN` or
-`UPSTASH_REDIS_REST_...`; the app accepts either). Then **Deployments > ... > Redeploy**.
+Project > **Storage** > **Create / Connect Database** > pick a **Redis** database (Upstash or Redis Cloud, the free plan is
+enough) > connect it to this project for **Production**. Vercel adds the connection variable itself (for example
+`KV_REDIS_URL` or `KV_REST_API_URL`); the app finds it automatically. Vercel hides these values ("Sensitive"), so you
+cannot copy them and you don't need to. Then **Deployments > ... > Redeploy**.
 
-Why it matters: this is how the app remembers what it already prepared. Without it, the dashboard shows a red
-warning and automatic posting refuses to run.
+Why it matters: this is how the app remembers jobs, so the website can show them. Without it the dashboard shows a red
+warning and nothing appears on the site. `/admin` tests the connection: the first card must say **Saved ✓**.
 
 ## 5. Check it works
 
