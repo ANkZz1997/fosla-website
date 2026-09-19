@@ -9,7 +9,7 @@ const empty = (): JobDetails => ({ dates: [], postWise: [], age: [], fees: [], q
 export async function enrich(item: ListingItem): Promise<JobDetails> {
   let html: string;
   try {
-    html = await fetchText(item.url, { timeoutMs: 20_000 });
+    html = await fetchText(item.url, { timeoutMs: 12_000, retries: 0 });
   } catch (err) {
     console.error(`[enrich] ${item.url}:`, err instanceof Error ? err.message : err);
     return empty();

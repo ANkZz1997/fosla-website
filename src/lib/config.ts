@@ -35,6 +35,10 @@ export const env = {
   get channelUrl() {
     return process.env.WHATSAPP_CHANNEL_URL ?? "";
   },
+  /** "all" = every open job on the public board; "posted" = only jobs you have marked or sent as posted. */
+  get landingJobs(): "all" | "posted" {
+    return process.env.LANDING_JOBS === "posted" ? "posted" : "all";
+  },
   get instagramUrl() {
     return process.env.INSTAGRAM_URL ?? "";
   },
@@ -46,7 +50,7 @@ export const env = {
   },
   get maxNewPerRun() {
     const n = Number(process.env.MAX_NEW_PER_RUN);
-    return Number.isFinite(n) && n > 0 ? Math.floor(n) : 6;
+    return Number.isFinite(n) && n > 0 ? Math.floor(n) : 40;
   },
   get onlyHp() {
     return process.env.JOB_SCOPE === "only_hp";

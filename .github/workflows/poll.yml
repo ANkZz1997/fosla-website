@@ -1,12 +1,11 @@
-# Vercel's free (Hobby) plan only allows a cron job once a day. This calls the same endpoint every 30 minutes for free.
+# Optional "run it now" button (Actions tab > Check for new jobs > Run workflow).
+# The nightly check is done by Vercel Cron (see vercel.json), so this has no schedule.
 # Setup: repo Settings > Secrets and variables > Actions >
-#   secret  CRON_SECRET  (same value as in Vercel)
-#   variable APP_URL     (e.g. https://your-app.vercel.app, no trailing slash)
+#   secret   CRON_SECRET  (same value as in Vercel)
+#   variable APP_URL      (e.g. https://your-app.vercel.app, no trailing slash)
 name: Check for new jobs
 
 on:
-  schedule:
-    - cron: "*/30 * * * *"
   workflow_dispatch:
 
 jobs:
@@ -19,5 +18,8 @@ jobs:
           APP_URL: ${{ vars.APP_URL }}
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
         run: |
-          test -n "$APP_URL" && test -n "$CRON_SECRET" || { echo "Set the APP_URL variable and CRON_SECRET secret"; exit 1; }
+          if [ -z "$APP_URL" ] || [ -z "$CRON_SECRET" ]; then
+            echo "::warning::Set the APP_URL variable and CRON_SECRET secret first (see the comment at the top of this file)."
+            exit 0
+          fi
           curl --fail --silent --show-error --max-time 90 -H "Authorization: Bearer $CRON_SECRET" "$APP_URL/api/cron/run"

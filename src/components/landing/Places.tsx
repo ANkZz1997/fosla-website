@@ -204,8 +204,9 @@ export function Footer({ links, admin = false }: { links: Links; admin?: boolean
         <div className="lp-foot-links">
           <a href={links.join} target="_blank" rel="noopener">WhatsApp Channel</a>
           {links.instagram ? <a href={links.instagram} target="_blank" rel="noopener">Instagram</a> : null}
-          <a href="#services">Services</a>
-          <a href="#visit">Visit us</a>
+          <Link href="/jobs">Live jobs</Link>
+          <Link href="/#services">Services</Link>
+          <Link href="/#visit">Visit us</Link>
           <Link href="/admin" prefetch={false}><Lock width={14} height={14} /> {admin ? "Dashboard" : "Admin login"}</Link>
           {admin ? (
             <form method="post" action="/api/admin/logout"><input type="hidden" name="next" value="/" /><button type="submit" className="lp-linkbtn">Log out</button></form>

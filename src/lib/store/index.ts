@@ -9,8 +9,13 @@ export interface Store {
   saveJob(job: JobRecord): Promise<void>;
   /** Newest first. */
   listJobs(limit: number): Promise<JobRecord[]>;
-  /** Atomically claim a cross-site dedupe key. Returns false if another job already holds it. */
-  claimKey(key: string, jobId: string): Promise<boolean>;
+  /**
+   * Atomically claim a cross-site dedupe key. Returns false if another job already holds it.
+   * A short ttl makes the claim expire by itself if the run dies before the job is saved; call renewKey once it is.
+   */
+  claimKey(key: string, jobId: string, ttlSeconds?: number): Promise<boolean>;
+  /** Make a claim permanent (for the normal retention period). */
+  renewKey(key: string): Promise<void>;
   getMeta<T>(name: string): Promise<T | null>;
   setMeta(name: string, value: unknown): Promise<void>;
 }
@@ -56,9 +61,13 @@ class RedisStore implements Store {
     return raws.filter((r): r is string => !!r).map((r) => JSON.parse(r) as JobRecord);
   }
 
-  async claimKey(key: string, jobId: string) {
-    const r = await this.cmd<string | null>("SET", `fosla:key:${key}`, jobId, "NX", "EX", TTL_SECONDS);
+  async claimKey(key: string, jobId: string, ttlSeconds = TTL_SECONDS) {
+    const r = await this.cmd<string | null>("SET", `fosla:key:${key}`, jobId, "NX", "EX", ttlSeconds);
     return r === "OK";
+  }
+
+  async renewKey(key: string) {
+    await this.cmd("EXPIRE", `fosla:key:${key}`, TTL_SECONDS);
   }
 
   async getMeta<T>(name: string) {
@@ -128,6 +137,10 @@ class MemoryStore implements Store {
     this.snap.keys[key] = jobId;
     await this.flush();
     return true;
+  }
+
+  async renewKey() {
+    /* claims never expire in the local file store */
   }
   async getMeta<T>(name: string) {
     await this.load();

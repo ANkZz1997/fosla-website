@@ -1,15 +1,13 @@
 import type { Metadata } from "next";
 import { Fab, FinalCta, Footer, Portals, Services, Checklist, Visit } from "@/components/landing/Places";
-import { Anatomy, Feed, Stats, Steps, Ticker } from "@/components/landing/Sections";
+import { Anatomy, Stats, Steps, Ticker } from "@/components/landing/Sections";
+import { JobsPreview } from "@/components/landing/Board";
 import { ADDRESS, PHONE, SERVICES, chatLink } from "@/components/landing/data";
-import { body, deva, display } from "@/components/landing/fonts";
+import { SiteShell } from "@/components/landing/SiteShell";
 import { Hero, type HeroPost } from "@/components/landing/Hero";
-import { Nav, type Links } from "@/components/landing/Nav";
-import { isAdmin } from "@/lib/auth";
-import { env } from "@/lib/config";
-import { getLandingData } from "@/lib/landing-data";
+import { Nav } from "@/components/landing/Nav";
+import { loadSite } from "@/lib/site";
 import { SOURCES } from "@/lib/sources";
-import "./landing.css";
 
 export const dynamic = "force-dynamic";
 
@@ -36,27 +34,23 @@ const jsonLd = {
 };
 
 export default async function Home() {
-  const [{ jobs, postedCount }, admin] = await Promise.all([getLandingData(), isAdmin()]);
-  const links: Links = {
-    // Until a channel link is configured, "join" opens a chat asking to be added, so the button never dead-ends.
-    join: env.channelUrl || chatLink("Hi FOSLA Cyber Cafe, please add me to your jobs WhatsApp channel."),
-    instagram: env.instagramUrl,
-  };
-  const post: HeroPost = jobs[0]
-    ? { img: `/api/poster/${jobs[0].id}`, title: jobs[0].title, sample: false }
+  const { jobs, links, admin, serverNow } = await loadSite();
+  // The phone mock shows a real poster only if it has been posted (posters of drafts stay private).
+  const showcase = jobs.find((j) => j.posted);
+  const post: HeroPost = showcase
+    ? { img: `/api/poster/${showcase.id}`, title: showcase.title, sample: false }
     : { img: "/api/poster/sample", title: "Sample FOSLA job post", sample: true };
 
   return (
-    <div className={`lp ${display.variable} ${body.variable} ${deva.variable}`}>
-      <noscript><style>{".lp-rv,.lp-steps li{opacity:1!important;transform:none!important}"}</style></noscript>
+    <SiteShell>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <Nav links={links} admin={admin} />
       <main>
         <Hero links={links} post={post} />
         <Ticker />
-        <Stats postedCount={postedCount} sources={SOURCES.length} services={SERVICES.length} />
+        <Stats openCount={jobs.filter((j) => j.category === "job").length} sources={SOURCES.length} services={SERVICES.length} />
+        <JobsPreview jobs={jobs} links={links} serverNow={serverNow} />
         <Anatomy />
-        <Feed jobs={jobs} links={links} />
         <Services />
         <Portals />
         <Steps />
@@ -67,6 +61,6 @@ export default async function Home() {
       <Footer links={links} admin={admin} />
       <Fab />
       <address hidden>{ADDRESS}</address>
-    </div>
+    </SiteShell>
   );
 }

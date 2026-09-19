@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Arrow, Close, Instagram, Lock, Menu, WhatsApp } from "./icons";
 import { Magnetic } from "./fx";
@@ -10,11 +11,12 @@ export interface Links {
   instagram: string;
 }
 
+// "/#..." works from every page: on the home page it scrolls, elsewhere it goes home first.
 const NAV = [
-  { href: "#updates", label: "Latest updates" },
-  { href: "#services", label: "Services" },
-  { href: "#how", label: "How it works" },
-  { href: "#visit", label: "Visit us" },
+  { href: "/jobs", label: "Live jobs" },
+  { href: "/#services", label: "Services" },
+  { href: "/#how", label: "How it works" },
+  { href: "/#visit", label: "Visit us" },
 ];
 
 function LogoutForm({ className = "lp-btn lp-btn-sm ghost" }: { className?: string }) {
@@ -30,6 +32,7 @@ export function Nav({ links, admin = false }: { links: Links; admin?: boolean })
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [progress, setProgress] = useState(0);
+  const path = usePathname();
 
   useEffect(() => {
     const on = () => {
@@ -51,12 +54,12 @@ export function Nav({ links, admin = false }: { links: Links; admin?: boolean })
     <header className={`lp-nav ${scrolled ? "is-scrolled" : ""}`}>
       <div className="lp-progress" style={{ transform: `scaleX(${progress})` }} />
       <div className="lp-wrap lp-nav-in">
-        <a href="#top" className="lp-logo" aria-label="FOSLA Cyber Cafe, home">
+        <Link href="/" className="lp-logo" aria-label="FOSLA Cyber Cafe, home">
           <span className="lp-logo-mark">F</span>
           <span>FOSLA <b>CYBER CAFE</b></span>
-        </a>
+        </Link>
         <nav className="lp-links" aria-label="Main">
-          {NAV.map((n) => <a key={n.href} href={n.href}>{n.label}</a>)}
+          {NAV.map((n) => <Link key={n.href} href={n.href} aria-current={path === n.href ? "page" : undefined}>{n.label}</Link>)}
         </nav>
         <div className="lp-nav-cta">
           <Link href="/admin" className="lp-btn lp-btn-sm ghost" prefetch={false}><Lock width={16} height={16} /> <span>{admin ? "Dashboard" : "Admin login"}</span></Link>
@@ -70,7 +73,7 @@ export function Nav({ links, admin = false }: { links: Links; admin?: boolean })
         </div>
       </div>
       <div className={`lp-drawer ${open ? "open" : ""}`}>
-        {NAV.map((n) => <a key={n.href} href={n.href} onClick={() => setOpen(false)}>{n.label} <Arrow width={18} height={18} /></a>)}
+        {NAV.map((n) => <Link key={n.href} href={n.href} onClick={() => setOpen(false)}>{n.label} <Arrow width={18} height={18} /></Link>)}
         <a href={links.join} target="_blank" rel="noopener" className="lp-btn wa"><WhatsApp /> Join our WhatsApp Channel</a>
         {links.instagram ? <a href={links.instagram} target="_blank" rel="noopener" className="lp-btn ig"><Instagram /> Follow on Instagram</a> : null}
         <Link href="/admin" className="lp-btn ghost" prefetch={false}><Lock /> {admin ? "Open dashboard" : "Admin login"}</Link>

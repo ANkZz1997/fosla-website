@@ -63,7 +63,7 @@ warning and automatic posting refuses to run.
 
 1. Open `https://<your-project>.vercel.app/`: the landing page. Join/Instagram buttons should open your channel and page.
 2. Click **Admin login**, sign in, and confirm the top status card says **Memory of posted jobs: Saved ✓**.
-3. Press **Fetch new jobs now**. In under a minute you should see posters appear.
+3. Press **Fetch new jobs now**. In under a minute you should see jobs appear under **Last 24 hours**.
 
 ## 6. Start posting (Review mode)
 
@@ -76,13 +76,16 @@ For each poster in `/admin`:
 
 Skip anything you don't want. Nothing goes to the channel unless you send it.
 
-## 7. Make it check automatically
+**The public website also lists every open job** on its `/jobs` page (with an Apply button that opens your channel),
+even before you have posted it. Press **Skip** on any job you don't want shown. To show only jobs you have posted, set
+`LANDING_JOBS=posted` in Vercel and redeploy.
 
-- The included `vercel.json` runs once a day (08:00 IST): the most Vercel's free plan allows.
-- For every 30 minutes (free): GitHub repo > **Settings > Secrets and variables > Actions**
-  - **Secrets** tab > New: `CRON_SECRET` = the same value as in Vercel
-  - **Variables** tab > New: `APP_URL` = `https://<your-project>.vercel.app` (no trailing slash)
-  - Then **Actions** tab > "Check for new jobs" > **Run workflow** to test it (should show a green tick).
+## 7. Automatic nightly check
+
+Nothing to set up: `vercel.json` makes Vercel call the app **every night at 12:00 AM IST** (`30 18 * * *` in UTC). On the free
+Hobby plan Vercel runs it sometime within that hour. It only runs on the **Production** deployment. In `/admin` the
+**Last 24 hours** tab shows what the last check found, and **Fetch new jobs now** is always there for a manual check.
+To test the schedule without waiting: Vercel > your project > **Settings > Cron Jobs** > **Run**.
 
 ## 8. Optional: one-tap or automatic posting with the bridge
 

@@ -68,6 +68,8 @@ export interface JobRecord extends ListingItem {
   createdAt: string;
   postedAt?: string;
   error?: string;
+  /** How many times the job page was re-read after the first attempt failed. */
+  enrichTries?: number;
 }
 
 export interface SourceResult {
@@ -84,6 +86,8 @@ export interface RunSummary {
   discovered: number;
   fresh: number;
   created: number;
+  /** Jobs whose page failed to load earlier and were completed on this run. */
+  refreshed: number;
   posted: number;
   errors: string[];
 }

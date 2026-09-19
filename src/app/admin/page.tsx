@@ -13,7 +13,9 @@ import { RunButton } from "./RunButton";
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Admin | FOSLA Jobs Auto-Post", robots: { index: false, follow: false } };
 
-const TABS = ["ready", "posted", "failed", "skipped", "all"] as const;
+const TABS = ["new", "ready", "posted", "failed", "skipped", "all"] as const;
+const TAB_LABEL: Record<(typeof TABS)[number], string> = { new: "Last 24 hours", ready: "Ready", posted: "Posted", failed: "Failed", skipped: "Skipped", all: "All" };
+const DAY = 86_400_000;
 
 function Shell({ children, loggedIn = false }: { children: React.ReactNode; loggedIn?: boolean }) {
   return (
@@ -66,9 +68,12 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
 
   const store = getStore();
   const [all, lastRun] = await Promise.all([store.listJobs(150), store.getMeta<RunSummary>("lastRun")]);
-  const tab = (TABS as readonly string[]).includes(sp.status ?? "") ? sp.status! : "ready";
-  const shown = tab === "all" ? all : all.filter((j) => j.status === tab);
-  const counts = Object.fromEntries(TABS.map((t) => [t, t === "all" ? all.length : all.filter((j) => j.status === t).length]));
+  const tab = ((TABS as readonly string[]).includes(sp.status ?? "") ? sp.status! : "new") as (typeof TABS)[number];
+  // "Last 24 hours" = everything the nightly (or manual) check found since yesterday, minus what you skipped.
+  const isNew = (j: (typeof all)[number]) => Date.now() - Date.parse(j.createdAt) < DAY && j.status !== "skipped";
+  const inTab = (t: (typeof TABS)[number], j: (typeof all)[number]) => (t === "all" ? true : t === "new" ? isNew(j) : j.status === t);
+  const shown = all.filter((j) => inTab(tab, j));
+  const counts = Object.fromEntries(TABS.map((t) => [t, all.filter((j) => inTab(t, j)).length]));
   const canPost = canPublish();
 
   const cards: CardJob[] = shown.map((j) => ({
@@ -85,7 +90,9 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
           <div className={`stat ${store.persistent ? "good" : "bad"}`}><b>Memory of posted jobs</b><span>{store.persistent ? "Saved ✓" : "NOT saved (connect Upstash Redis)"}</span></div>
           <div className="stat"><b>Posting mode</b><span>{canPost ? (env.autoPost ? "Bridge · automatic" : "Bridge · one click") : "Manual (copy & paste)"}</span></div>
           <div className={`stat ${aiEnabled() ? "good" : ""}`}><b>AI cleanup of messy pages</b><span>{aiEnabled() ? `On (${env.aiModel})` : "Off"}</span></div>
-          <div className="stat"><b>Last check</b><span>{lastRun ? new Date(lastRun.finishedAt).toLocaleString("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short" }) : "Never"}</span></div>
+          <div className="stat"><b>Public job board</b><span>{env.landingJobs === "posted" ? "Posted jobs only" : "All open jobs (Skip hides one)"}</span></div>
+          <div className="stat"><b>Automatic check</b><span>Every night at 12:00 AM IST</span></div>
+          <div className="stat"><b>Last check</b><span>{lastRun ? new Date(lastRun.finishedAt).toLocaleString("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short" }) : "Never"}{lastRun ? ` · ${lastRun.created} new` : ""}</span></div>
         </div>
 
         {!store.persistent ? (
@@ -102,7 +109,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
         <div className="toolbar">
           <div className="tabs">
             {TABS.map((t) => (
-              <Link key={t} href={`/admin?status=${t}`} className={`tab ${t === tab ? "on" : ""}`}>{t[0].toUpperCase() + t.slice(1)} ({counts[t]})</Link>
+              <Link key={t} href={`/admin?status=${t}`} className={`tab ${t === tab ? "on" : ""}`}>{TAB_LABEL[t]} ({counts[t]})</Link>
             ))}
           </div>
           <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
@@ -115,7 +122,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
             {cards.map((c) => <JobCard key={c.id} job={c} canPost={canPost} channelUrl={env.channelUrl} />)}
           </div>
         ) : (
-          <div className="panel empty">Nothing in “{tab}”. Press <b>Fetch new jobs now</b> to check all sites.</div>
+          <div className="panel empty">Nothing in “{TAB_LABEL[tab]}”. The site is checked automatically every night; you can also press <b>Fetch new jobs now</b>.</div>
         )}
       </main>
     </Shell>

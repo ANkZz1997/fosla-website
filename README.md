@@ -5,7 +5,7 @@ Checks government-job websites, prepares a branded poster and a full WhatsApp me
 
 ```
 HimExam · FreeJobAlert · SarkariResult · RojgarResult
-        │  every 30 min (GitHub Actions) or daily (Vercel Cron)
+        │  every night at 12:00 AM IST (Vercel Cron), or "Fetch new jobs now" in /admin
         ▼
   read listings → skip expired / already-seen / same job on another site
         │
@@ -22,14 +22,22 @@ HimExam · FreeJobAlert · SarkariResult · RojgarResult
 ## The public landing page
 
 `/` is a public landing page for the cafe: animated hero, a "Join our WhatsApp Channel" button, Instagram,
-an admin-login button, the latest posts you have published, all services, quick links to IGNOU/HPU/NSP/eDistrict,
+an admin-login button, a short **latest openings** preview, all services, quick links to IGNOU/HPU/NSP/eDistrict,
 a document checklist, and your address, hours and an "open now" badge.
 
-- Set `WHATSAPP_CHANNEL_URL` and `INSTAGRAM_URL` in Vercel to make the buttons point at your channel and page.
-  Until the channel URL is set, "Join" opens a WhatsApp chat with you instead, and the Instagram button is hidden.
-- The feed shows **only jobs you have marked or sent as posted**. Drafts waiting for review never appear publicly,
-  and their poster images return 404 to anyone who isn't logged in as admin.
-- Until you have posted something, the page shows one clearly labelled **sample post**.
+**Live job board (`/jobs`).** The home page shows only the three newest openings and a **View all jobs** button; the
+full board lives on its own page, `/jobs`, so the home page stays short. Every open job is listed with its seats, a countdown to the deadline (green, amber, red as it
+nears), NEW and CLOSING SOON badges, search, filters, sorting, and an **Apply** button that opens your WhatsApp channel.
+A second "Ask us" button opens a chat with you about that specific job.
+
+- A job is shown while it is *open*: not skipped, and its last date has not passed (results and admit cards fade after
+  10 days). Press **Skip** in `/admin` to remove one from the public page.
+- `LANDING_JOBS=all` (default) lists every open job, **including ones you have not reviewed yet**.
+  Set `LANDING_JOBS=posted` to list only jobs you have marked or sent as posted.
+- Only a poster you have posted is public (the *Poster* button). Posters of unreviewed jobs return 404 to visitors.
+- Set `WHATSAPP_CHANNEL_URL` and `INSTAGRAM_URL` so the buttons point at your channel and page. Until the channel URL
+  is set, "Join" and "Apply" open a WhatsApp chat with you instead, and the Instagram button is hidden.
+- Until there is at least one open job, the page shows one clearly labelled **sample post**.
 - The admin dashboard is at `/admin` (the landing page links to it).
 
 ## What is and isn't possible with WhatsApp Channels
@@ -60,9 +68,12 @@ Start with Review mode. Switch to Bridge once you trust the output.
 
 ### Running it automatically
 
-- `vercel.json` runs a check **once a day** (08:00 IST). That is the most the free Vercel plan allows.
-- For **every 30 minutes**, for free: in your GitHub repo add secret `CRON_SECRET` and variable `APP_URL`;
-  [.github/workflows/poll.yml](.github/workflows/poll.yml) does the rest. (Or use cron-job.org, or Vercel Pro.)
+- `vercel.json` runs the check **every night at 12:00 AM IST** (Vercel schedules in UTC: `30 18 * * *`). Vercel sends
+  `CRON_SECRET` itself, so nothing else is needed. On the free Hobby plan Vercel fires it *sometime within that hour*,
+  not to the exact minute.
+- **Manual check:** press **Fetch new jobs now** in `/admin` any time. It runs the same code as the nightly check.
+- Optional: the **Check for new jobs** workflow in GitHub's Actions tab is another "run now" button (needs the `CRON_SECRET`
+  secret and `APP_URL` variable). It has no schedule.
 
 ### Optional: AI cleanup
 
@@ -76,8 +87,9 @@ with `AI_MODEL`. It only runs on the minority of pages that need it.
 |---|---|---|
 | `PUBLISH_MODE` | `manual` | `manual` = review in dashboard, `bridge` = send through your bridge |
 | `AUTO_POST` | `false` | With `bridge`: post new jobs without review |
-| `MAX_NEW_PER_RUN` | `6` | New posts prepared per check (keeps the channel from being flooded) |
+| `MAX_NEW_PER_RUN` | `40` | Most new jobs taken in per check. A nightly check should be able to take in a whole day of jobs |
 | `JOB_SCOPE` | `all` | `only_hp` = only Himachal Pradesh notifications |
+| `LANDING_JOBS` | `all` | Public job board: `all` open jobs, or `posted` only |
 
 The first run prepares `MAX_NEW_PER_RUN` posts, most relevant first (Himachal jobs, then other jobs, admissions,
 admit cards, results); later runs continue through the backlog.

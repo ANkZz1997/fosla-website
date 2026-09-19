@@ -15,7 +15,7 @@ export function RunButton() {
       const res = await fetch("/api/admin/run", { method: "POST" });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? `HTTP ${res.status}`);
-      setMsg(`Found ${data.discovered} items, ${data.created} new post${data.created === 1 ? "" : "s"} prepared${data.posted ? `, ${data.posted} posted` : ""}.`);
+      setMsg(`Found ${data.discovered} items, ${data.created} new post${data.created === 1 ? "" : "s"} prepared${data.refreshed ? `, ${data.refreshed} completed` : ""}${data.posted ? `, ${data.posted} posted` : ""}.`);
       router.refresh();
     } catch (e) {
       setMsg(`Failed: ${e instanceof Error ? e.message : e}`);

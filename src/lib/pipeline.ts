@@ -52,34 +52,64 @@ async function postReady(store: Store, deadline: number, summary: RunSummary) {
   }
 }
 
+const CONCURRENCY = 3;
+/** Claims taken before a job is saved expire on their own, so a run killed mid-way never loses a job. */
+const CLAIM_TTL = 15 * 60;
+const MAX_REFRESH = 5;
+
+/** A page that failed to load once (site hiccup at midnight) gets another chance on later runs. */
+async function refreshThin(store: Store, startBy: number, summary: RunSummary) {
+  const thin = (await store.listJobs(60)).filter(
+    (j) => j.category === "job" && j.details.extractedBy === "listing-only" && j.status !== "posted" && (j.enrichTries ?? 0) < 3,
+  );
+  let done = 0;
+  for (const job of thin) {
+    if (done >= MAX_REFRESH || Date.now() > startBy) break;
+    done++;
+    const details = await enrich(job);
+    await store.saveJob({ ...job, details, enrichTries: (job.enrichTries ?? 0) + 1 });
+    if (details.extractedBy !== "listing-only") summary.refreshed++;
+  }
+}
+
 export async function runPipeline(opts: { maxNew?: number; budgetMs?: number } = {}): Promise<RunSummary> {
   const started = Date.now();
   const store = getStore();
   const maxNew = opts.maxNew ?? env.maxNewPerRun;
-  const deadline = started + (opts.budgetMs ?? 50_000);
-  const summary: RunSummary = { startedAt: new Date(started).toISOString(), finishedAt: "", sources: [], discovered: 0, fresh: 0, created: 0, posted: 0, errors: [] };
+  const budget = opts.budgetMs ?? 50_000;
+  const deadline = started + budget;
+  // Stop starting new jobs well before the function limit so in-flight pages can finish.
+  const startBy = started + Math.floor(budget * 0.75);
+  const summary: RunSummary = { startedAt: new Date(started).toISOString(), finishedAt: "", sources: [], discovered: 0, fresh: 0, created: 0, refreshed: 0, posted: 0, errors: [] };
 
   const { items, results } = await fetchAllSources();
   summary.sources = results;
   summary.discovered = items.length;
   for (const r of results) if (!r.ok) summary.errors.push(`${r.source}: ${r.error}`);
 
-  // Decide what is new one item at a time so the per-run cap is exact.
-  const fresh: ListingItem[] = [];
-  for (const item of pickCandidates(items)) {
-    if (fresh.length >= maxNew) break;
-    if (await store.getJob(item.id)) continue;
-    if (!(await store.claimKey(item.key, item.id))) continue;
-    fresh.push(item);
-  }
-  summary.fresh = fresh.length;
+  // Workers pull candidates one at a time. A slot is reserved before any await so the per-run cap is exact,
+  // and a job is claimed only when a worker is about to process it (never in bulk up front).
+  const queue = pickCandidates(items);
+  let reserved = 0;
+  const worker = async () => {
+    while (Date.now() <= startBy && reserved < maxNew) {
+      const item = queue.shift();
+      if (!item) return;
+      reserved++;
+      if ((await store.getJob(item.id)) || !(await store.claimKey(item.key, item.id, CLAIM_TTL))) {
+        reserved--;
+        continue;
+      }
+      summary.fresh++;
+      const details = await enrich(item);
+      await store.saveJob({ ...item, details, status: "ready", createdAt: new Date().toISOString(), enrichTries: details.extractedBy === "listing-only" ? 1 : 0 });
+      await store.renewKey(item.key);
+      summary.created++;
+    }
+  };
+  await pool(Array.from({ length: CONCURRENCY }, (_, i) => i), CONCURRENCY, worker);
 
-  await pool(fresh, 3, async (item) => {
-    const details = await enrich(item);
-    const record: JobRecord = { ...item, details, status: "ready", createdAt: new Date().toISOString() };
-    await store.saveJob(record);
-    summary.created++;
-  });
+  await refreshThin(store, startBy, summary);
 
   if (env.autoPost && canPublish()) {
     if (store.persistent) await postReady(store, deadline, summary);
