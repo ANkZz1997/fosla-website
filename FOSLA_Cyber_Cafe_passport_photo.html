@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FOSLA Cyber Cafe | Mandi</title>
+<meta name="description" content="FOSLA Cyber Cafe - Print, Scan, Xerox, Forms, Internet, Lamination, Typing, ID Cards, Passport Photos, Admissions, Scholarships and Resume services in Mandi, Himachal Pradesh.">
+<style>
+:root{--red:#b40010;--red2:#e21b2d;--dark:#090909;--dark2:#171717;--white:#fff;--ink:#141414;--soft:#f7f7f7;--line:#ddd}
+*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+body{font-family:Arial,Helvetica,sans-serif;background:var(--soft);color:var(--ink)}
+a{text-decoration:none;color:inherit}.wrap{width:min(1180px,94%);margin:auto}
+.top{background:linear-gradient(90deg,#080808,#260006,#080808);color:#fff;border-bottom:2px solid var(--red)}
+.nav{height:74px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.brand{font-weight:900;font-size:25px;letter-spacing:1px}.brand span{color:#ff2438}
+.navlinks{display:flex;gap:24px;font-size:14px;font-weight:800}.navlinks a:hover{color:#ff3347}
+.call{background:linear-gradient(135deg,var(--red),#73000a);padding:12px 17px;border-radius:6px;font-weight:900;border:1px solid #ff5260}
+.hero{background:#fff;padding:25px 0 0}
+.logo-image{width:100%;display:block;max-height:410px;object-fit:cover;object-position:center top;border:1px solid #eee}
+.ribbon{background:linear-gradient(90deg,#5c0008,#c20b1c,#5c0008);color:#fff;display:grid;grid-template-columns:repeat(4,1fr);margin-top:0;border-top:4px solid #210000;border-bottom:4px solid #210000}
+.ribbon div{padding:17px 14px;border-right:1px solid rgba(255,255,255,.35);text-align:center}.ribbon div:last-child{border:0}
+.ribbon b{display:block;font-size:13px;margin-bottom:4px}.ribbon span{font-size:12px;color:#eee}
+section{padding:65px 0}.heading{text-align:center;margin-bottom:35px}.heading h2{font-size:36px;text-transform:uppercase;letter-spacing:1px}.heading h2:after{content:"";display:block;width:90px;height:4px;background:var(--red);margin:12px auto}.heading p{color:#666}
+.services{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.card{background:#fff;border:1px solid #ddd;border-radius:10px;padding:24px 16px;text-align:center;box-shadow:0 6px 20px rgba(0,0,0,.07);transition:.2s;position:relative;overflow:hidden}
+.card:before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#70000a,#e31b2d,#70000a)}
+.card:hover{transform:translateY(-5px);box-shadow:0 12px 30px rgba(0,0,0,.13)}.card{color:var(--ink);display:block}
+.ignou-card{cursor:default}.ignou-card:hover{transform:none}
+.ignou-toggle{border:0;background:linear-gradient(135deg,#d7192d,#78000a);color:#fff;font-weight:900;border-radius:6px;padding:10px 12px;margin-top:14px;cursor:pointer;width:100%;font-size:11px}
+.ignou-links{display:none;margin-top:10px;text-align:left}
+.ignou-links.open{display:grid;gap:7px}
+.ignou-links a{display:block;background:#f5f5f5;border:1px solid #ddd;border-left:4px solid var(--red);padding:9px 8px;border-radius:5px;font-size:10px;font-weight:800;color:#222}
+.ignou-links a:hover{background:#ffecef;color:#9d0010}.ico{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;margin:3px auto 14px;background:linear-gradient(145deg,#d7192d,#650008);color:#fff;font-size:27px;box-shadow:0 5px 12px rgba(130,0,10,.3)}
+.card h3{font-size:16px;margin-bottom:6px}.card p{font-size:12px;color:#777}
+.about{display:grid;grid-template-columns:1.1fr .9fr;gap:22px}.panel{background:#111;color:#fff;border-radius:12px;padding:34px;border:2px solid #4b0006;box-shadow:0 12px 35px rgba(0,0,0,.14)}
+.panel h2{font-size:28px}.panel p{color:#ccc;margin:12px 0 20px}.checks{display:grid;gap:10px}.checks div{font-weight:700}.checks span{color:#ff2b40;margin-right:8px}
+.contact{display:grid;grid-template-columns:1fr 1fr;gap:20px}.contactbox{background:#fff;padding:28px;border-radius:12px;border:1px solid #ddd;box-shadow:0 6px 20px rgba(0,0,0,.06)}
+.item{padding:14px 0;border-bottom:1px solid #eee}.item:last-child{border:0}.item small{display:block;color:#777;margin-bottom:4px}.item strong{font-size:15px}
+.btn{display:inline-flex;padding:13px 20px;border-radius:7px;font-weight:900;margin:5px 6px 0 0}.primary{background:linear-gradient(135deg,#d7192d,#78000a);color:#fff}.dark{background:#111;color:#fff}
+footer{background:#090909;color:#ccc;border-top:5px solid var(--red);padding:30px 0}.foot{display:flex;justify-content:space-between;gap:20px;font-size:13px}
+@media(max-width:900px){.navlinks{display:none}.services{grid-template-columns:repeat(2,1fr)}.about,.contact{grid-template-columns:1fr}.ribbon{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.services{grid-template-columns:1fr}.logo-image{max-height:260px}.ribbon{grid-template-columns:1fr}.ribbon div{border-right:0;border-bottom:1px solid rgba(255,255,255,.3)}.heading h2{font-size:28px}.foot{flex-direction:column}}
+
+.photo-tool{background:#fff;border:1px solid #ddd;border-radius:12px;padding:28px;box-shadow:0 6px 20px rgba(0,0,0,.06);max-width:900px;margin:0 auto}
+.photo-tool-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.photo-upload{border:2px dashed #cfcfcf;border-radius:10px;padding:22px;text-align:center;background:#fafafa}
+.photo-upload input{display:block;width:100%;margin:12px 0}
+.photo-preview{display:flex;justify-content:center;align-items:center;min-height:300px;background:#eee;border-radius:10px;overflow:hidden}
+.photo-preview canvas{max-width:100%;height:auto;display:block}
+.photo-actions{margin-top:16px;display:flex;flex-wrap:wrap;gap:8px}
+.photo-status{font-size:12px;color:#666;margin-top:10px;line-height:1.5}
+.photo-note{font-size:11px;color:#777;margin-top:12px}
+.photo-tool .btn{cursor:pointer;border:0}
+@media(max-width:700px){.photo-tool-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="top">
+<div class="wrap nav">
+  <div class="brand">FOSLA <span>CYBER CAFE</span></div>
+  <nav class="navlinks"><a href="#home">HOME</a><a href="#services">SERVICES</a><a href="#about">ABOUT</a><a href="#contact">CONTACT</a></nav>
+  <a class="call" href="tel:+919817897344">☎ 9817897344</a>
+</div>
+</header>
+
+<main id="home">
+<section class="hero">
+<div class="wrap">
+  <img class="logo-image" src="fosla-logo-banner.jpg" alt="FOSLA Cyber Cafe logo and branding">
+  <div class="ribbon">
+    <div><b>PRINT • SCAN • XEROX</b><span>High quality document services</span></div>
+    <div><b>FORMS • INTERNET • TYPING</b><span>Fast online digital assistance</span></div>
+    <div><b>LAMINATION • ID CARDS</b><span>Professional finishing services</span></div>
+    <div><b>ADMISSION • SCHOLARSHIP</b><span>Education application support</span></div>
+  </div>
+</div>
+</section>
+
+<section id="services"><div class="wrap">
+<div class="heading"><h2>Our Services</h2><p>All your digital needs under one roof</p></div>
+<div class="services">
+<a class="card" href="https://www.freejobalert.com/hp-government-jobs/" target="_blank" rel="noopener"><div class="ico">💼</div><h3>HP GOVERNMENT JOBS</h3><p>Latest Himachal Pradesh government job updates</p></a>
+<div class="card ignou-card" id="admissionPortal">
+  <div class="ico">🎓</div>
+  <h3>ADMISSION PORTAL</h3>
+  <p>Important college and technical admission portals</p>
+  <button class="ignou-toggle" type="button" onclick="toggleAdmission()">OPEN ADMISSION PORTAL ▾</button>
+  <div class="ignou-links" id="admissionLinks">
+    <a href="https://admission.vgcmandi.co.in/" target="_blank" rel="noopener">1. VGC MANDI ↗</a>
+    <a href="https://www.gckullu.ac.in/online_registration.aspx" target="_blank" rel="noopener">2. GDC KULLU ↗</a>
+    <a href="https://www.hptechboard.com/online-admission-2017" target="_blank" rel="noopener">3. ITI, PAT, LEET, PHARMACY ↗</a>
+  </div>
+</div>
+<div class="card ignou-card" id="ignouPortal">
+  <div class="ico">📚</div>
+  <h3>IGNOU</h3>
+  <p>All important IGNOU student services in one place</p>
+  <button class="ignou-toggle" type="button" onclick="toggleIgnou()">OPEN IGNOU PORTAL ▾</button>
+  <div class="ignou-links" id="ignouLinks">
+    <a href="https://ignouadmission.samarth.edu.in/" target="_blank" rel="noopener">1. IGNOU FIRST YEAR ADMISSION ↗</a>
+    <a href="https://ignou.samarth.edu.in/index.php/site/login" target="_blank" rel="noopener">2. IGNOU 2ND &amp; 3RD YEAR ADMISSION ↗</a>
+    <a href="https://www.ignou.ac.in/studentService/download/assignments" target="_blank" rel="noopener">3. IGNOU ASSIGNMENT QUESTION PAPER ↗</a>
+    <a href="https://isms.ignou.ac.in/changeadmdata/AdmissionStatusNew.ASP" target="_blank" rel="noopener">4. IGNOU ADMISSION STATUS ↗</a>
+    <a href="https://gradecard.ignou.ac.in/" target="_blank" rel="noopener">5. IGNOU GRADE CARD ↗</a>
+    <a href="https://onlineservices.ignou.ac.in/idms/" target="_blank" rel="noopener">6. IGNOU STUDENT DEGREE APPLY ↗</a>
+  </div>
+</div>
+<div class="card ignou-card" id="hpuPortal">
+  <div class="ico">🏫</div>
+  <h3>HPU</h3>
+  <p>Himachal Pradesh University services</p>
+  <button class="ignou-toggle" type="button" onclick="toggleHpu()">OPEN HPU PORTAL ▾</button>
+  <div class="ignou-links" id="hpuLinks">
+    <a href="https://hpuniv.ac.in/" target="_blank" rel="noopener">1. HIMACHAL PRADESH UNIVERSITY ↗</a>
+    <a href="https://nadmissions.hpushimla.in/PreAdm/PA_OpenDegree.aspx" target="_blank" rel="noopener">2. HPU ICDEOL AND PRE ADMISSION ↗</a>
+    <a href="https://nstudentportal.hpushimla.in/" target="_blank" rel="noopener">3. HPU STUDENT PORTAL ↗</a>
+    <a href="https://hpuniv.ac.in/innerpage/view_all_news.php" target="_blank" rel="noopener">4. NOTIFICATION ↗</a>
+  </div>
+</div>
+</div>
+<div class="card ignou-card" id="nspPortal">
+  <div class="ico">🏆</div>
+  <h3>NSP</h3>
+  <p>National Scholarship Portal services</p>
+  <button class="ignou-toggle" type="button" onclick="toggleNsp()">OPEN NSP PORTAL ▾</button>
+  <div class="ignou-links" id="nspLinks">
+    <a href="https://scholarships.gov.in/otrapplication/" target="_blank" rel="noopener">1. STUDENT REGISTRAION ↗</a>
+    <a href="https://scholarships.gov.in/ApplicationForm/login" target="_blank" rel="noopener">2. STUDENT LOG IN ↗</a>
+    <a href="https://scholarships.gov.in/scholarshipEligibility/" target="_blank" rel="noopener">3. SCHOLERSHIP ELIGIBLITY ↗</a>
+    <a href="https://scholarships.gov.in/All-Scholarships" target="_blank" rel="noopener">4. SCHEMES ON NSP ↗</a>
+  </div>
+</div>
+<a class="card" href="https://www.edistrict.hp.gov.in/pages/staticSite/new_home.xhtml" target="_blank" rel="noopener"><div class="ico">🏛</div><h3>eDISTRICT</h3><p>Himachal Pradesh eDistrict services</p></a>
+
+<article class="card"><div class="ico">🖨</div><h3>PRINT</h3><p>High quality colour & black/white printing</p></article>
+<article class="card"><div class="ico">📠</div><h3>SCAN</h3><p>Document scanning and PDF creation</p></article>
+<article class="card"><div class="ico">▣</div><h3>XEROX</h3><p>Black & white / colour photocopy</p></article>
+<article class="card"><div class="ico">📝</div><h3>FORMS</h3><p>Online form filling and submission</p></article>
+<article class="card"><div class="ico">🌐</div><h3>INTERNET</h3><p>High speed internet services</p></article>
+<article class="card"><div class="ico">▤</div><h3>LAMINATION</h3><p>All size lamination services</p></article>
+<article class="card"><div class="ico">⌨</div><h3>TYPING</h3><p>Fast typing and document preparation</p></article>
+<article class="card"><div class="ico">▣</div><h3>ID CARDS</h3><p>All type of ID card services</p></article>
+<article class="card"><div class="ico">📷</div><h3>PASSPORT PHOTOS</h3><p>Instant passport-size photos</p></article>
+<article class="card"><div class="ico">📄</div><h3>RESUME</h3><p>Professional resume / CV making</p></article>
+<article class="card"><div class="ico">📷</div><h3>PASSPORT SIZE PHOTO</h3><p>Auto crop, resize and background removal</p></article>
+</div>
+</div></section>
+
+
+<section id="passport-photo">
+<div class="wrap">
+  <div class="heading">
+    <h2>Passport Size Photo</h2>
+    <p>Choose a photo — crop to 3.5 × 4.5 cm, remove background and download</p>
+  </div>
+  <div class="photo-tool">
+    <div class="photo-tool-grid">
+      <div>
+        <div class="photo-upload">
+          <b>SELECT PHOTO FROM COMPUTER</b>
+          <input id="photoInput" type="file" accept="image/*">
+          <div class="photo-status" id="photoStatus">Select a JPG, PNG or WEBP image.</div>
+        </div>
+        <div class="photo-actions">
+          <button class="btn primary" type="button" id="removeBgBtn" disabled>REMOVE BACKGROUND</button>
+          <button class="btn dark" type="button" id="downloadPhotoBtn" disabled>DOWNLOAD PHOTO</button>
+        </div>
+        <div class="photo-note">
+          Final size: <b>3.5 cm width × 4.5 cm height</b>. The tool creates a 413 × 531 px image
+          (approximately 300 DPI equivalent). Background removal runs in the browser.
+        </div>
+        <div class="photo-actions">
+          <a class="btn primary" href="https://image.pi7.org/passport-size-photo" target="_blank" rel="noopener">PI7 PASSPORT PHOTO</a>
+          <a class="btn dark" href="https://www.reduceimages.com/" target="_blank" rel="noopener">REDUCE IMAGES</a>
+        </div>
+      </div>
+      <div class="photo-preview">
+        <canvas id="photoCanvas" width="413" height="531"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<section id="about"><div class="wrap about">
+<div class="panel"><h2>Why Choose FOSLA Cyber Cafe?</h2><p>Fast, reliable and secure digital services for students, job seekers, businesses and local customers.</p><div class="checks">
+<div><span>✓</span>Fast & Reliable Service</div><div><span>✓</span>Affordable Prices</div><div><span>✓</span>Secure & Trusted</div><div><span>✓</span>Experienced Support</div><div><span>✓</span>Customer-focused service</div>
+</div></div>
+<div class="panel"><h2>Quick Contact</h2><p>Call or WhatsApp us for service availability and requirements.</p>
+<a class="btn primary" href="tel:+919817897344">☎ Call 9817897344</a>
+<a class="btn dark" href="https://wa.me/919817897344">WhatsApp</a>
+</div>
+</div></section>
+
+<section id="contact"><div class="wrap">
+<div class="heading"><h2>Visit Us</h2><p>We are ready to help with your digital work.</p></div>
+<div class="contact">
+<div class="contactbox">
+<div class="item"><small>📍 ADDRESS</small><strong>Shop No. 26, Tibetan Market, Near Police Thana Sadar, District Mandi, Himachal Pradesh 175001</strong></div>
+<div class="item"><small>📞 CALL</small><strong>9817897344, 7834010065</strong></div>
+<div class="item"><small>💬 WHATSAPP</small><strong>9817897344</strong></div>
+</div>
+<div class="contactbox">
+<div class="item"><small>🕘 OPENING HOURS</small><strong>9:00 AM – 8:00 PM • Monday to Sunday</strong></div>
+<div class="item"><small>⚡ SERVICE</small><strong>Fast • Reliable • Secure</strong></div>
+<a class="btn primary" href="https://www.google.com/maps/search/?api=1&query=FOSLA%20Cybercafe%20Tibetan%20Market%20Mandi%20Himachal%20Pradesh">Open Google Maps</a>
+</div>
+</div>
+</div></section>
+</main>
+
+<footer><div class="wrap foot"><span>© 2026 FOSLA Cyber Cafe. All rights reserved.</span><span>PRINT • SCAN • XEROX • FORMS • INTERNET • TYPING • ID CARDS</span></div></footer>
+<script>
+function toggleIgnou(){
+  const links = document.getElementById('ignouLinks');
+  const btn = document.querySelector('#ignouPortal .ignou-toggle');
+  links.classList.toggle('open');
+  btn.textContent = links.classList.contains('open') ? 'CLOSE IGNOU PORTAL ▴' : 'OPEN IGNOU PORTAL ▾';
+}
+function toggleAdmission(){
+  const links = document.getElementById('admissionLinks');
+  const btn = document.querySelector('#admissionPortal .ignou-toggle');
+  links.classList.toggle('open');
+  btn.textContent = links.classList.contains('open') ? 'CLOSE ADMISSION PORTAL ▴' : 'OPEN ADMISSION PORTAL ▾';
+}
+function toggleSpu(){
+  const links = document.getElementById('spuLinks');
+  const btn = document.querySelector('#spuPortal .ignou-toggle');
+  links.classList.toggle('open');
+  btn.textContent = links.classList.contains('open') ? 'CLOSE SPU PORTAL ▴' : 'OPEN SPU PORTAL ▾';
+}
+function toggleHpu(){
+  const links = document.getElementById('hpuLinks');
+  const btn = document.querySelector('#hpuPortal .ignou-toggle');
+  links.classList.toggle('open');
+  btn.textContent = links.classList.contains('open') ? 'CLOSE HPU PORTAL ▴' : 'OPEN HPU PORTAL ▾';
+}
+function toggleNsp(){
+  const links = document.getElementById('nspLinks');
+  const btn = document.querySelector('#nspPortal .ignou-toggle');
+  links.classList.toggle('open');
+  btn.textContent = links.classList.contains('open') ? 'CLOSE NSP PORTAL ▴' : 'OPEN NSP PORTAL ▾';
+}
+</script>
+
+<script type="module">
+import { removeBackground } from "https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.7.0/+esm";
+
+const input = document.getElementById('photoInput');
+const canvas = document.getElementById('photoCanvas');
+const ctx = canvas.getContext('2d');
+const status = document.getElementById('photoStatus');
+const removeBgBtn = document.getElementById('removeBgBtn');
+const downloadBtn = document.getElementById('downloadPhotoBtn');
+
+let sourceImage = null;
+let processedBlob = null;
+
+function drawPassport(img) {
+  const targetW = 413, targetH = 531; // 3.5 x 4.5 cm at ~300 DPI
+  canvas.width = targetW; canvas.height = targetH;
+  ctx.clearRect(0,0,targetW,targetH);
+
+  const srcRatio = img.width / img.height;
+  const dstRatio = targetW / targetH;
+  let sx=0, sy=0, sw=img.width, sh=img.height;
+
+  if (srcRatio > dstRatio) {
+    sw = img.height * dstRatio;
+    sx = (img.width - sw) / 2;
+  } else {
+    sh = img.width / dstRatio;
+    sy = (img.height - sh) / 2;
+  }
+
+  ctx.drawImage(img, sx, sy, sw, sh, 0, 0, targetW, targetH);
+}
+
+input.addEventListener('change', () => {
+  const file = input.files && input.files[0];
+  if (!file) return;
+  processedBlob = null;
+  const url = URL.createObjectURL(file);
+  const img = new Image();
+  img.onload = () => {
+    sourceImage = img;
+    drawPassport(img);
+    removeBgBtn.disabled = false;
+    downloadBtn.disabled = false;
+    status.textContent = 'Photo loaded and auto-cropped to 3.5 × 4.5 cm.';
+    URL.revokeObjectURL(url);
+  };
+  img.onerror = () => status.textContent = 'Could not read this image.';
+  img.src = url;
+});
+
+removeBgBtn.addEventListener('click', async () => {
+  const file = input.files && input.files[0];
+  if (!file) return;
+  removeBgBtn.disabled = true;
+  downloadBtn.disabled = true;
+  status.textContent = 'Removing background… first use may take some time while the AI model loads.';
+  try {
+    const result = await removeBackground(file, {
+      output: { format: 'image/png', type: 'foreground' }
+    });
+    const url = URL.createObjectURL(result);
+    const img = new Image();
+    img.onload = () => {
+      // White background for standard passport photos.
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(0,0,canvas.width,canvas.height);
+      drawPassport(img);
+      // drawPassport may clear the white background; redraw with white behind transparent pixels.
+      const temp = document.createElement('canvas');
+      temp.width = canvas.width; temp.height = canvas.height;
+      const tctx = temp.getContext('2d');
+      tctx.fillStyle = '#fff'; tctx.fillRect(0,0,temp.width,temp.height);
+      tctx.drawImage(canvas,0,0);
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      ctx.drawImage(temp,0,0);
+      processedBlob = null;
+      status.textContent = 'Background removed and replaced with white. Ready to download.';
+      removeBgBtn.disabled = false;
+      downloadBtn.disabled = false;
+      URL.revokeObjectURL(url);
+    };
+    img.src = url;
+  } catch (err) {
+    status.textContent = 'Background removal failed. Please try a clear, front-facing photo or use PI7.';
+    removeBgBtn.disabled = false;
+    downloadBtn.disabled = false;
+  }
+});
+
+downloadBtn.addEventListener('click', () => {
+  canvas.toBlob(blob => {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'FOSLA_Passport_Photo_3.5x4.5cm.png';
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  }, 'image/png');
+});
+</script>
+
+</body>
+</html>

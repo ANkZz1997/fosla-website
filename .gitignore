@@ -1,0 +1,10 @@
+node_modules
+.next
+.env*
+!.env.example
+.data
+bridge/auth
+bridge/node_modules
+*.tsbuildinfo
+next-env.d.ts
+bridge/sent.json
